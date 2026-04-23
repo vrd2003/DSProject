@@ -62,6 +62,21 @@ crow::json::wvalue AIAnalyzer::fetchAISuggestions(const std::string& code) {
                    "- Every node MUST have a 'color' property ('red' or 'black').\n"
                    "- Focus heavily on ROTATIONS. When a rotation occurs, explain it clearly in the 'description'.\n"
                    "- Use 'left' and 'right' pointers. Omit NIL/Sentinel nodes unless they change color.\n";
+    } else if (code.find("TBT") != std::string::npos || code.find("Threaded") != std::string::npos || code.find("threaded") != std::string::npos) {
+        pattern = "tree";
+        ds_specs = "--- THREADED BINARY TREE (TBT) EXPERT MODE ---\n"
+                   "- Every node MUST have 'left' and 'right' pointers.\n"
+                   "- THREADS: If a pointer is a thread (points to an ancestor), MUST set 'threadLeft: true' or 'threadRight: true'.\n"
+                   "- Represent lbit/rbit as metadata or dedicated boolean flags.\n"
+                   "- Traversal: Highlight the active node moving along the threads.\n";
+    } else if (code.find("AVL") != std::string::npos || code.find("avl") != std::string::npos || code.find("Balance") != std::string::npos) {
+        pattern = "tree";
+        ds_specs = "--- AVL TREE EXPERT MODE ---\n"
+                   "- Every node MUST have 'height' (int) and 'balance_factor' (int) properties.\n"
+                   "- EXAMPLE: { \"id\": \"10\", \"val\": \"10\", \"height\": 3, \"balance_factor\": 1, \"left\": \"5\", \"right\": \"20\", \"pattern\": \"tree\" }\n"
+                   "- ALL NODES (including temp) MUST explicitly have 'pattern': 'tree' if tree, or 'linked_list' if list.\n"
+                   "- ROTATION STEPS: Generate distinct steps for Detection, Re-pinning, and Finalize.\n"
+                   "- Balance Factor: Highlight as 'metadata' if it's != 0 (e.g., 'BF: -1').\n";
     } else if (code.find("Tree") != std::string::npos || code.find("tree") != std::string::npos || code.find("Node") != std::string::npos) {
         pattern = "tree";
         ds_specs = "--- BINARY TREE EXPERT MODE ---\n"
@@ -117,7 +132,7 @@ crow::json::wvalue AIAnalyzer::fetchAISuggestions(const std::string& code) {
     
     // Call Groq API via curl synchronously
     std::cerr << "[DEBUG] Sending request to Groq API (Timeout: 60s)..." << std::endl;
-    std::string apiKey = "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";
+    std::string apiKey = "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";
     std::string cmd = "curl.exe -s --max-time 60 -w \"\\n%{http_code}\" -X POST https://api.groq.com/openai/v1/chat/completions "
                       "-H \"Authorization: Bearer " + apiKey + "\" "
                       "-H \"Content-Type: application/json\" "
