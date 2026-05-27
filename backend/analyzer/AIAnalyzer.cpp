@@ -35,7 +35,7 @@ inline int get_int(const crow::json::rvalue& val, const std::string& key, int fa
 crow::json::wvalue AIAnalyzer::fetchAISuggestions(const std::string& code) {
 
     crow::json::wvalue req;
-    req["model"] = "meta-llama/llama-4-scout-17b-16e-instruct";
+    req["model"] = "add_your_groq_model_name_here"; // e.g., "gpt-4.0-groq"
     req["max_tokens"] = 8192;
     req["temperature"] = 0.1;
     
@@ -132,7 +132,7 @@ crow::json::wvalue AIAnalyzer::fetchAISuggestions(const std::string& code) {
     
     // Call Groq API via curl synchronously
     std::cerr << "[DEBUG] Sending request to Groq API (Timeout: 60s)..." << std::endl;
-    std::string apiKey = "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";
+    std::string apiKey = "add_your_groq_api_key_here"; // TODO: Securely load this from config or environment variable
     std::string cmd = "curl.exe -s --max-time 60 -w \"\\n%{http_code}\" -X POST https://api.groq.com/openai/v1/chat/completions "
                       "-H \"Authorization: Bearer " + apiKey + "\" "
                       "-H \"Content-Type: application/json\" "
